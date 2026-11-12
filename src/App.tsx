@@ -25,6 +25,7 @@ export default function App() {
   const [route, setRoute] = useState<string | null>(() => routeFromHash(location.hash));
   const boardScroll = useRef(0);
   const lastOpened = useRef<string | null>(null);
+  const openedFrom = useRef<HTMLElement | null>(null);
 
   const load = useCallback(() => {
     setFailed(false);
@@ -42,7 +43,12 @@ export default function App() {
     const onHash = () => {
       const next = routeFromHash(location.hash);
       setRoute((prev) => {
-        if (prev === null && next !== null) boardScroll.current = window.scrollY;
+        if (prev === null && next !== null) {
+          boardScroll.current = window.scrollY;
+          // Remember the exact link the reader opened (winners and table share slugs).
+          const active = document.activeElement;
+          openedFrom.current = active instanceof HTMLAnchorElement && active.dataset.slug === next ? active : null;
+        }
         if (next !== null) lastOpened.current = next;
         return next;
       });
@@ -58,9 +64,11 @@ export default function App() {
       document.getElementById("scorecard-title")?.focus({ preventScroll: true });
     } else if (lastOpened.current) {
       window.scrollTo(0, boardScroll.current);
-      const link = document.querySelector<HTMLAnchorElement>(
-        `a[data-slug="${CSS.escape(lastOpened.current)}"]`,
-      );
+      const from = openedFrom.current;
+      const link =
+        from && from.isConnected && from.dataset.slug === lastOpened.current
+          ? from
+          : document.querySelector<HTMLAnchorElement>(`a[data-slug="${CSS.escape(lastOpened.current)}"]`);
       link?.focus({ preventScroll: true });
     }
   }, [route, data]);

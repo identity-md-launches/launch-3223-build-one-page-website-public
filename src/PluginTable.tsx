@@ -67,6 +67,8 @@ const Row = memo(function Row({ p, showTags }: { p: Plugin; showTags: boolean })
       className={p.stage === "final" ? "row row-final" : "row"}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest("a") || window.getSelection()?.toString()) return;
+        // Focus this row's link so Back returns to this row, not a winner with the same slug.
+        e.currentTarget.querySelector<HTMLAnchorElement>("a[data-slug]")?.focus({ preventScroll: true });
         location.hash = href;
       }}
     >

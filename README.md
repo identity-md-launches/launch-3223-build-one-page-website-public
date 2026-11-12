@@ -57,7 +57,7 @@ Routing is hash-based (`#/p/152458-housemate`), so no server rewrites are needed
 ## Path budget
 
 Committed output: source (about 60 KB), `package-lock.json`, `dist/` (index.html, one JS and one CSS
-bundle of about 177 KB, favicon, og.png 46 KB, results.json 2.6 MB) and `public/` (the same
+bundle of about 177 KB, favicon, og.png 45 KB, results.json 2.6 MB) and `public/` (the same
 results.json and og.png, identical bytes, so Git stores each blob once). The JSON compresses to well
 under 1 MB in a Git pack. `.gitignore` excludes only generated dependency and cache directories
 (`node_modules/`, `.npm/`, `.cache/`, `.vite/`) and `*.tgz` archives, at every nesting level.
@@ -79,10 +79,14 @@ search ("voice" gave 50 rows, a nonsense query showed the empty state and its cl
 1,210, All 1,464); tag chips (voice 45, voice or hardware 91, Clear tags); sorting by Score both ways,
 Name, and back to Place, with `aria-sort` updating; paging (150 rows, "Show more" to 300, scrolling
 adds more); a row click opening `#/p/149641-onda` with focus on the title; the Share link text and URL;
-Back restoring the scroll position and focus to the row; keyboard Enter on a row link; browser back
+Back restoring the scroll position and focus to the exact link that opened the scorecard; keyboard Enter on a row link; browser back
 keeping the search query; direct links to an unread plugin and to a nonexistent one; no horizontal
 scroll on the 10 winners' scorecards at 390; dark mode at 1440. Console: 0 errors, 0 warnings. The live
 gist request returned 200; the probe's offline browser showed the fallback copy and its notice.
+
+Revision 2 (scripted Playwright in Chromium, see VALIDATION.md): the table switches to the list up to
+896px with no header overlap above it; all 1,464 scorecards fit 320px; static metadata carries no
+counts; the judging section shows both `share_27_up` values; Back returns focus to the originating link.
 
 Limitations: no screen reader session, no physical phone, no native 200% zoom (320 wide reflow was
 checked instead). The Share link was checked as a URL; posting on X was not attempted.

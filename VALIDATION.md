@@ -14,7 +14,8 @@ Worker's report for this assignment, not an independent certification. Date: 202
   everyone else; filters match the stage words exactly (Run inside Hermes = 108 round 3 plugins that
   did not reach the final); tag chips use "any of the chosen tags"; the one-line text clamps to two
   lines in the table with the full text on the scorecard; the "two shares" in the judging section are
-  each family's share of reads from `judges.*.reads`; "three agents each" is the median count of
+  `judges.codex.share_27_up` and `judges.claude.share_27_up` (share of each family's reads that scored
+  27 or higher), shown to one decimal; "three agents each" is the median count of
   inside-Hermes reads per round 3 plugin, computed from the file. Eight PRs hold several plugins, so the
   unique key and link is `PR-NAME`.
 - Variants: light and dark (system preference). No localization.
@@ -23,8 +24,8 @@ Worker's report for this assignment, not an independent certification. Date: 202
 
 | Domain | Status | Evidence |
 | --- | --- | --- |
-| Accessibility | Checked | Native buttons, links, `<label for>` on search and sort select, `aria-pressed` chips, `aria-sort` on sortable headers, `role="status"` result count, skip link as first tab stop (focus ring computed 2px solid and seen in the browser), one `h1` per view, row name is a real link, scorecard focuses its `h1` and Back returns focus to the row link. Probe: all 205 controls at least 24px or spaced at 390. Unperformed: screen reader session, forced-colors mode, native 200% zoom. |
-| Layout | Checked | Probe: no horizontal scroll at 320, 390, 1440, no overlaps, nothing cut off. Browser: scorecards of all 10 winners plus unread and low entries at 390 had scrollWidth 390; table becomes a list at 45rem and narrows at 64rem; one primary action per view. Unperformed: pseudo-localization, RTL. |
+| Accessibility | Checked | Native buttons, links, `<label for>` on search and sort select, `aria-pressed` chips, `aria-sort` on sortable headers, `role="status"` result count, skip link as first tab stop (focus ring computed 2px solid and seen in the browser), one `h1` per view, row name is a real link, scorecard focuses its `h1` and Back returns focus to the exact link that opened it (the table row or the winner entry, which share a slug). Probe: all 205 controls at least 24px or spaced at 390. Unperformed: screen reader session, forced-colors mode, native 200% zoom. |
+| Layout | Checked | Probe: no horizontal scroll at 320, 390, 1440, no overlaps, nothing cut off. Browser: scorecards of all 10 winners plus unread and low entries at 390 had scrollWidth 390; table becomes a list at 56rem and narrows at 64rem; one primary action per view. Unperformed: pseudo-localization, RTL. |
 | Writing | Checked (source) | Verb-first buttons ("Search all 1,464 plugins", "Share on X", "Clear search and filters", "Try again"), descriptive links ("Public record", "Pull request #152458", "Repository at 09c1a1d"), sentence case throughout, empty state names the query and offers a clear button, load error says how to recover. |
 | Typography | Checked | Probe: one family (system-ui), weights 400/600/700, 5 sizes (13, 14, 16, 20, 28 to 40), tracking natural, no caps, no em dashes. Inputs 16px. Tabular numbers on scores and places. Measures capped. |
 | Colors | Checked | Semantic tokens only, both theme blocks present. Probe measured all text at or above 4.5:1 (3:1 large) in light mode. Dark mode viewed at 1440, contrast not measured. |
@@ -69,6 +70,24 @@ Browser tool (Playwright MCP) on the served export, viewports 1440x900 and 390x8
 - Back link and browser back: scroll restored (3162 to 3162), focus back on the row link, search kept.
 - Keyboard: Tab reaches the skip link first with a visible 2px ring; Enter on a row link opens the scorecard.
 - Console: 0 errors, 0 warnings. Network: gist 200; no other outside hosts.
+
+## Revision 2: reviewer findings
+
+Each finding was reproduced on the previous export (`git archive HEAD dist`, served locally) with a
+Playwright script in `test/scratch/check.mjs` (Chromium; results.json routed to the local copy), then
+fixed and rechecked on the new export with the same script.
+
+| Finding | Before (old export) | Fix | After |
+| --- | --- | --- | --- |
+| Table at tablet widths | 721px: header overlap 24.3px, one-line cell 41px; 740px: overlap 5.3px, 60px; 800px: 104px | `src/styles.css:280` list breakpoint 45rem to 56rem | 721, 740, 800, 896px use the list with Sort by; 897, 960, 1024, 1280, 1440px tables have no header overlap and a one-line column of 201 to 352px |
+| Long scorecard names at 320px | 3 of 1,464 scorecards scrolled sideways (predictionmarketspicks 375px, getyoutubetranscript 343px, aitrainingdatabroker 333px) | `src/styles.css:344` `#scorecard-title { overflow-wrap: anywhere; }` | all 1,464 scorecards at 320px have scrollWidth 320; title stays 28px and complete |
+| Counts in share metadata | description and og:description said 1,464; og.png printed it | `index.html` copy without counts; `public/og.png` re-rendered with "Scorecards for every plugin" | no digits in either meta tag |
+| Shares from judges | sentence used read volume (64%, 36%) | `src/HowJudged.tsx` uses `share_27_up` | "...one curve; 20.4% of Codex reads and 10.9% of Claude reads scored 27 or higher." |
+| Focus after Back from a table scorecard | focus went to the winner link at y=-2335; next Tab stayed in winners | `src/App.tsx` remembers the link that opened the scorecard; `src/PluginTable.tsx` row click focuses its own link first | Enter on the table link, then Back: focus on the table link in view (y=442), next Tab moves on from the table; row click + browser Back: focus in table; winner link + Back: focus on the winner |
+
+After the last source change: `npm run build` (tsc --noEmit then vite build) passed; the design probe
+passed 16 of 16 again; console errors 0 in the scripted runs. The probe's browser had no network, so
+it measured the fallback copy, as before.
 
 ## 5. Completion
 

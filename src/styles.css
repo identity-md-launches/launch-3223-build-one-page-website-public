@@ -276,8 +276,8 @@ input[type="search"], select {
   .c-score { width: 4.25rem; }
 }
 
-/* Phones: the table becomes a list. */
-@media (max-width: 45rem) {
+/* Phones and tablets: the table becomes a list. */
+@media (max-width: 56rem) {
   .sort-mobile { display: grid; }
   .board, .board tbody { display: block; }
   .board thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
@@ -340,3 +340,5 @@ input[type="search"], select {
 /* Grid tracks never grow past the viewport; long URLs in judges' notes wrap instead. */
 .top, .section, .foot, .card-page, .card-page > section, .read, .win-body { grid-template-columns: minmax(0, 1fr); }
 .read p, .why, .why-list li, .does, .foot p { overflow-wrap: anywhere; }
+/* Unbroken plugin names wrap rather than widen the page on a 320px phone. */
+#scorecard-title { overflow-wrap: anywhere; }

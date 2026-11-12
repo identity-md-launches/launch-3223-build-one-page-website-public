@@ -57,7 +57,9 @@ text) in light mode at 320, 390 and 1440; dark mode pairs were viewed, not measu
 - `text-wrap: balance` on headings, `pretty` on descriptions. Long-form lines are capped
   (`.measure` 70ch, `.lede` 62ch, descriptions 75ch, judges' reads 80ch).
 - `.num` sets `font-variant-numeric: tabular-nums` on scores, places and counts.
-- Long unbroken strings (URLs in judges' notes) use `overflow-wrap: anywhere`.
+- Long unbroken strings (URLs in judges' notes, and plugin names in the scorecard title
+  `#scorecard-title`) use `overflow-wrap: anywhere`, so a long name wraps at its full size instead of
+  widening the page at 320px.
 
 ## Layout
 
@@ -70,7 +72,8 @@ text) in light mode at 320, 390 and 1440; dark mode pairs were viewed, not measu
 - Breakpoints, chosen where the content stops fitting:
   - `max-width: 64rem`: table columns narrow (place 3.75rem, name 9.5rem, author 7.5rem, tags 7rem,
     how far 8.5rem, score 4.25rem); the one-line column takes the rest.
-  - `max-width: 45rem`: the table becomes a list. Each row is a grid: place on the left; name and
+  - `max-width: 56rem` (896px): phones and tablets get the list instead of the table, because below
+    that width the seven fixed columns leave the one-line column too narrow to read. The table becomes a list. Each row is a grid: place on the left; name and
     score on the first line; then author, the one line, how far it got and tags. The header row is
     visually hidden but stays for screen readers, and a "Sort by" select replaces the column buttons.
 - The first screen at 390 wide shows the title, the how sentence, status, the note, the main action

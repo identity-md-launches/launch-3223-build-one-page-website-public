@@ -5,8 +5,7 @@ export function HowJudged({ data }: { data: Results }) {
   const each = agentsPerInsideRun(data.plugins);
   const claude = data.judges?.claude;
   const codex = data.judges?.codex;
-  const totalReads = (claude?.reads ?? 0) + (codex?.reads ?? 0);
-  const pct = (n: number) => `${Math.round((n / totalReads) * 100)}%`;
+  const pct = (share: number) => `${(share * 100).toFixed(1)}%`;
   return (
     <section className="wrap section" aria-labelledby="how-h" id="how">
       <h2 id="how-h">How it was judged</h2>
@@ -28,10 +27,10 @@ export function HowJudged({ data }: { data: Results }) {
           ranked the whole final.
         </li>
       </ol>
-      {claude && codex && totalReads > 0 && (
+      {claude?.share_27_up != null && codex?.share_27_up != null && (
         <p className="measure">
-          Codex agents wrote {pct(codex.reads)} of the reads and Claude agents {pct(claude.reads)}, and both are
-          graded on one curve.
+          Codex and Claude agents are graded on one curve; {pct(codex.share_27_up)} of Codex reads and{" "}
+          {pct(claude.share_27_up)} of Claude reads scored 27 or higher.
         </p>
       )}
       <p className="links">
