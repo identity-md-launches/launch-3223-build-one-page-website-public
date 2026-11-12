@@ -1,0 +1,6 @@
+# Generated dependency and cache directories, at every nesting level.
+node_modules/
+.npm/
+.cache/
+.vite/
+*.tgz
